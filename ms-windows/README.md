@@ -103,8 +103,21 @@ If nothing shows up in the log files, then it is probably environment related an
 
 The base version 'init' will probably break if dependencies vanish from their source URLs.  The locations in the base version JSON files will need to be updated to point at new URLs.
 
-Creating Templates
-------------------
+Directory Structure
+-------------------
+
+This directory structure layout should help with understanding the output of each major step (init, save-profile, prepare, build/build-all):
+
+* /templates - Main base version JSON and templated Inno Setup and Wix toolset scripts.  The base version JSON files drive the entire process to produce consistent results.
+* /versions/3.1/deps - Verified binary dependencies.  Required to build and package OpenSSL.  Output of 'init'.
+* /versions/3.1/profiles - Stores and preserves environment variables in architecture and system-dependent JSON files.  Output of 'save-profile'.
+* /versions/3.1/3.1.0/source - Extracted source code tree.  Output of 'prepare'.
+* /versions/3.1/3.1.0/temp_ARCH - A temporary copy of the extracted source code tree to enable concurrent building of multiple architectures for a single version (e.g. temp_x86, temp_x64, temp_arm64).  Used during 'build'.
+* /versions/3.1/3.1.0/out_ARCH - Build output for an architecture (e.g. out_x86, out_x64, out_arm64).  Output of 'build'.
+* /versions/3.1/3.1.0/installers - Installer structure preparation location and final output.  Output of 'build' and 'build-all'.
+
+Creating New Templates
+----------------------
 
 When a new base version is released (e.g. 3.2), the simplest approach to creating a new template is to copy the previous version's template and then make some adjustments to 'info.json' and various installer scripts.  For official releases, the various dependencies should be updated to best reflect supported end-user OSes and architectures.  The build tools script can be used to evaluate/validate all potential dependencies via 'init-test':
 
